@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CreditLevel;
+use App\Models\SiteSetting;
 use Illuminate\Http\Request;
 
 class CreditSimulatorController extends Controller
@@ -9,6 +11,7 @@ class CreditSimulatorController extends Controller
     public function __invoke(Request $request)
     {
         $levels = $this->creditLevels();
+        $settings = $this->siteSettings();
         $selectedType = $request->query('tipo_prestamo');
         $amount = $request->filled('monto') ? (float) $request->query('monto') : null;
         $term = $request->filled('plazo') ? (int) $request->query('plazo') : null;
@@ -53,8 +56,12 @@ class CreditSimulatorController extends Controller
             'showTerms' => $showTerms,
             'errors' => $errors,
             'result' => $result,
-            'requirements' => $this->requirements(),
-            'whatsappAffiliationUrl' => $this->whatsappUrl('Me interesa, vi su anuncio, quiero afiliarme. ¿Me envía requisitos?'),
+            'requirements' => $this->requirements($settings),
+            'settings' => $settings,
+            'whatsappAffiliationUrl' => $this->whatsappUrl(
+                $settings['whatsapp_number'] ?? '59162553853',
+                $settings['whatsapp_affiliation_message'] ?? 'Me interesa, vi su anuncio, quiero afiliarme. ¿Me envía requisitos?'
+            ),
         ]);
     }
 
@@ -78,9 +85,7 @@ class CreditSimulatorController extends Controller
             'total_payment' => $totalPayment,
             'total_interest' => $totalInterest,
             'usage' => $level['usage'],
-            'warning' => $level['is_housing']
-                ? 'Este cálculo es referencial. El crédito de vivienda está sujeto a evaluación individual, capacidad de pago y garantías.'
-                : 'Este cálculo es referencial y no representa aprobación automática del crédito. El monto debe estar dentro del rango permitido y la evaluación final será individual.',
+            'is_housing' => $level['is_housing'],
         ];
     }
 
@@ -102,77 +107,36 @@ class CreditSimulatorController extends Controller
 
     private function creditLevels(): array
     {
-        $levels = [
-            'bajo' => [
-                'level' => 1,
-                'name' => 'Crédito Bajo',
-                'affiliations' => 1,
-                'affiliation_cost' => 250,
-                'min_amount' => 3000,
-                'max_amount' => 5000,
-                'annual_rate' => 12,
-                'available_terms' => [6, 12],
-                'usage' => 'Gastos menores, emergencias, consumo',
-                'is_housing' => false,
-            ],
-            'general' => [
-                'level' => 2,
-                'name' => 'Crédito General / Consumo',
-                'affiliations' => 2,
-                'affiliation_cost' => 500,
-                'min_amount' => 8000,
-                'max_amount' => 12000,
-                'annual_rate' => 12,
-                'available_terms' => [12, 18, 24],
-                'usage' => 'Bienes del hogar, compras generales',
-                'is_housing' => false,
-            ],
-            'productivo' => [
-                'level' => 3,
-                'name' => 'Crédito Productivo / Emprendimiento',
-                'affiliations' => 3,
-                'affiliation_cost' => 750,
-                'min_amount' => 15000,
-                'max_amount' => 25000,
-                'annual_rate' => 11,
-                'available_terms' => [12, 24, 36],
-                'usage' => 'Negocios, agricultura, comercio, taller',
-                'is_housing' => false,
-            ],
-            'vehiculos' => [
-                'level' => 4,
-                'name' => 'Crédito Vehículos',
-                'affiliations' => 4,
-                'affiliation_cost' => 1250,
-                'min_amount' => 70000,
-                'max_amount' => 140000,
-                'annual_rate' => 12,
-                'available_terms' => [24, 36, 48, 60, 72],
-                'usage' => 'Compra de auto, moto, vehículo de trabajo',
-                'is_housing' => false,
-            ],
-            'vivienda' => [
-                'level' => 5,
-                'name' => 'Crédito Vivienda',
-                'affiliations' => 5,
-                'affiliation_cost' => 2000,
-                'min_amount' => 70000,
-                'max_amount' => null,
-                'annual_rate' => 6.5,
-                'available_terms' => [60, 84, 120],
-                'usage' => 'Construcción, mejora, compra de casa o terreno',
-                'is_housing' => true,
-            ],
-        ];
+        return CreditLevel::query()
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->get()
+            ->mapWithKeys(function (CreditLevel $creditLevel) {
+                $level = [
+                    'level' => $creditLevel->level,
+                    'name' => $creditLevel->name,
+                    'affiliations' => $creditLevel->affiliations,
+                    'affiliation_cost' => (float) $creditLevel->affiliation_cost,
+                    'min_amount' => (float) $creditLevel->min_amount,
+                    'max_amount' => $creditLevel->max_amount !== null ? (float) $creditLevel->max_amount : null,
+                    'annual_rate' => (float) $creditLevel->annual_rate,
+                    'available_terms' => $creditLevel->available_terms ?? [],
+                    'usage' => $creditLevel->authorized_use,
+                    'is_housing' => $creditLevel->is_housing,
+                    'evaluation_required' => $creditLevel->evaluation_required,
+                ];
 
-        return array_map(function (array $level) {
+                return [$creditLevel->slug => $level];
+            })
+            ->map(function (array $level) {
             $level['range_label'] = $this->rangeLabel($level);
             $level['option_label'] = $this->optionLabel($level);
             $level['terms_label'] = implode(', ', $level['available_terms']) . ' meses';
             $level['terms_sentence'] = $this->termsSentence($level['available_terms']);
 
             return $level;
-        }, $levels);
+            })
+            ->all();
     }
 
     private function termsSentence(array $terms): string
@@ -186,19 +150,20 @@ class CreditSimulatorController extends Controller
         return implode(', ', $terms) . ' y ' . $last . ' meses';
     }
 
-    private function requirements(): array
+    private function siteSettings(): array
     {
-        return [
-            'Ser afiliado activo de la cooperativa.',
-            'Presentar documento de identidad vigente.',
-            'Respaldar ingresos y capacidad de pago.',
-            'Cumplir con el nivel de afiliaciones requerido.',
-            'Aceptar la evaluación crediticia individual.',
-        ];
+        return SiteSetting::query()
+            ->pluck('value', 'key')
+            ->all();
     }
 
-    private function whatsappUrl(string $message): string
+    private function requirements(array $settings): array
     {
-        return 'https://wa.me/59162553853?text=' . rawurlencode($message);
+        return preg_split('/\r\n|\r|\n/', $settings['general_requirements'] ?? '', -1, PREG_SPLIT_NO_EMPTY);
+    }
+
+    private function whatsappUrl(string $number, string $message): string
+    {
+        return 'https://wa.me/' . preg_replace('/\D+/', '', $number) . '?text=' . rawurlencode($message);
     }
 }

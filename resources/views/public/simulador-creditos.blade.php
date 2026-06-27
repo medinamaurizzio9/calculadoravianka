@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Simulador de Créditos</title>
+    <title>{{ $settings['hero_title'] ?? 'Simulador de Créditos' }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         :root {
@@ -186,8 +186,8 @@
             <div class="row align-items-center g-4">
                 <div class="col-lg-8">
                     <div class="hero-kicker mb-3">Cooperativa Tierra Bendita</div>
-                    <h1 class="display-5 fw-bold mb-3">Simulador de Créditos</h1>
-                    <p class="lead mb-0">Selecciona un tipo de préstamo, ingresa el monto y elige un plazo disponible.</p>
+                    <h1 class="display-5 fw-bold mb-3">{{ $settings['hero_title'] ?? 'Simulador de Créditos' }}</h1>
+                    <p class="lead mb-0">{{ $settings['hero_subtitle'] ?? 'Calcula tu cuota aproximada antes de solicitar tu afiliación' }}</p>
                 </div>
                 <div class="col-lg-4 text-lg-end">
                     <a class="btn btn-gold btn-lg" href="{{ $whatsappAffiliationUrl }}" target="_blank" rel="noopener">
@@ -202,6 +202,7 @@
         <section class="calculator-card mb-4">
             <div class="p-4 p-lg-5">
                 <h2 class="section-title h3 mb-3">Calculadora</h2>
+                <p class="text-muted mb-4">{{ $settings['form_intro'] ?? 'Selecciona el tipo de préstamo, ingresa el monto y elige un plazo disponible.' }}</p>
 
                 @if ($errors !== [])
                     <div class="alert alert-warning simulator-alert" role="alert">
@@ -342,7 +343,7 @@
             <div class="col-lg-5">
                 <div class="notice rounded p-4 h-100">
                     <h2 class="h5 section-title">Advertencia legal</h2>
-                    <p class="mb-0">Este cálculo es referencial y no representa aprobación automática del crédito. La evaluación final será individual.</p>
+                    <p class="mb-0">{{ $settings['general_warning'] ?? 'Este cálculo es referencial y no representa aprobación automática del crédito. La evaluación final será individual.' }}</p>
                 </div>
             </div>
         </section>
@@ -426,7 +427,7 @@
                         </div>
 
                         <div class="notice p-3 rounded mt-4">
-                            {{ $result['warning'] }}
+                            {{ $result['is_housing'] ? ($settings['housing_warning'] ?? 'Este cálculo es referencial. El crédito de vivienda está sujeto a evaluación individual, capacidad de pago y garantías.') : ($settings['general_warning'] ?? 'Este cálculo es referencial y no representa aprobación automática del crédito. La evaluación final será individual.') }}
                         </div>
                     </div>
                     <div class="modal-footer">
