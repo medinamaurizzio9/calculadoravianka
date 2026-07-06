@@ -93,6 +93,22 @@ class CreditLevelSeeder extends Seeder
                 'is_active' => true,
                 'sort_order' => 5,
             ],
+            [
+                'slug' => 'profesores',
+                'name' => 'Crédito Profesores',
+                'level' => 6,
+                'affiliations' => 3,
+                'affiliation_cost' => 750,
+                'min_amount' => 10000,
+                'max_amount' => 50000,
+                'annual_rate' => 10,
+                'available_terms' => [12, 24, 36, 48],
+                'authorized_use' => 'Crédito dirigido a profesores para necesidades personales, compra de materiales educativos, capacitación, equipamiento, tecnología o mejoras familiares.',
+                'is_housing' => false,
+                'evaluation_required' => true,
+                'is_active' => true,
+                'sort_order' => 6,
+            ],
         ];
 
         foreach ($levels as $level) {

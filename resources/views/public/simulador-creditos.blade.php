@@ -137,6 +137,77 @@
             color: var(--white);
         }
 
+        .affiliate-card-section {
+            background: var(--white);
+            border: 1px solid rgba(11, 37, 69, .08);
+            border-radius: 8px;
+            box-shadow: 0 14px 34px rgba(11, 37, 69, .08);
+            overflow: hidden;
+        }
+
+        .affiliate-card-header {
+            background: linear-gradient(135deg, var(--navy), var(--petrol));
+            color: var(--white);
+            padding: 28px;
+        }
+
+        .affiliate-card-header .section-title {
+            color: var(--white);
+        }
+
+        .affiliate-card-header p {
+            color: rgba(255, 255, 255, .82);
+        }
+
+        .affiliate-step {
+            background: #f8fafc;
+            border: 1px solid #e3e8ef;
+            border-radius: 8px;
+            height: 100%;
+            padding: 22px;
+        }
+
+        .affiliate-step-number {
+            align-items: center;
+            background: var(--gold);
+            border-radius: 50%;
+            color: var(--navy);
+            display: inline-flex;
+            font-weight: 800;
+            height: 42px;
+            justify-content: center;
+            margin-bottom: 16px;
+            width: 42px;
+        }
+
+        .affiliate-step h3,
+        .physical-card h3 {
+            color: var(--navy);
+            font-weight: 800;
+        }
+
+        .physical-card {
+            background: #fbf7e8;
+            border: 1px solid rgba(201, 162, 39, .42);
+            border-left: 5px solid var(--gold);
+            border-radius: 8px;
+            height: 100%;
+            padding: 24px;
+        }
+
+        .physical-card-price {
+            color: var(--navy);
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .physical-card-list {
+            color: #41391f;
+            margin-bottom: 0;
+            padding-left: 1.2rem;
+        }
+
         .result-modal .modal-content {
             border: 0;
             border-radius: 8px;
@@ -156,6 +227,10 @@
         @media (max-width: 575.98px) {
             .hero {
                 padding: 48px 0 86px;
+            }
+
+            .affiliate-card-header {
+                padding: 22px;
             }
         }
     </style>
@@ -326,6 +401,80 @@
                         @endforeach
                     </tbody>
                 </table>
+            </div>
+        </section>
+
+        <section class="affiliate-card-section mb-4">
+            <div class="affiliate-card-header">
+                <div class="row align-items-center g-3">
+                    <div class="col-lg-8">
+                        <h2 class="section-title h3 mb-2">¿Cómo obtener tu tarjeta de afiliado?</h2>
+                        <p class="mb-0">Sigue estos pasos para activar tus beneficios como afiliado y solicitar tu credencial.</p>
+                    </div>
+                    <div class="col-lg-4 text-lg-end">
+                        <a class="btn btn-gold btn-lg" href="{{ $whatsappAffiliationUrl }}" target="_blank" rel="noopener">
+                            Solicitar afiliación
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 p-lg-5">
+                <div class="row g-4 mb-4">
+                    <div class="col-md-4">
+                        <article class="affiliate-step">
+                            <div class="affiliate-step-number">1</div>
+                            <h3 class="h5 mb-2">Paso 1: Afíliate</h3>
+                            <p class="text-muted mb-0">Realiza tu afiliación a la Cooperativa Tierra Bendita y accede a los beneficios disponibles para afiliados.</p>
+                        </article>
+                    </div>
+                    <div class="col-md-4">
+                        <article class="affiliate-step">
+                            <div class="affiliate-step-number">2</div>
+                            <h3 class="h5 mb-2">Paso 2: Obtén tu credencial virtual gratuita</h3>
+                            <p class="text-muted mb-0">Una vez afiliado, podrás recibir tu credencial de afiliado de manera virtual sin costo adicional.</p>
+                        </article>
+                    </div>
+                    <div class="col-md-4">
+                        <article class="affiliate-step">
+                            <div class="affiliate-step-number">3</div>
+                            <h3 class="h5 mb-2">Paso 3: Solicita tu tarjeta física</h3>
+                            <p class="text-muted mb-0">Si deseas tener tu tarjeta de afiliado en formato físico, puedes solicitarla para envío a tu domicilio.</p>
+                        </article>
+                    </div>
+                </div>
+
+                <div class="row g-4 align-items-stretch">
+                    <div class="col-lg-5">
+                        <div class="physical-card">
+                            <div class="d-flex align-items-start justify-content-between gap-3 mb-3">
+                                <div>
+                                    <h3 class="h4 mb-1">Tarjeta física</h3>
+                                    <div class="text-muted">Personalizada y lista para envío.</div>
+                                </div>
+                                <div class="text-end">
+                                    <div class="physical-card-price">150 Bs</div>
+                                    <div class="small text-muted">Costo</div>
+                                </div>
+                            </div>
+                            <ul class="physical-card-list">
+                                <li>El pago debe realizarse en oficinas.</li>
+                                <li>La tarjeta irá personalizada con fotografía.</li>
+                                <li>Incluirá sello institucional.</li>
+                                <li>Contará con medidas de seguridad correspondientes.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-7">
+                        <div class="content-card p-4 h-100">
+                            <h3 class="h5 section-title mb-3">Credencial confiable para afiliados</h3>
+                            <p class="text-muted mb-4">La credencial virtual no tiene costo adicional. La tarjeta física es opcional y puede solicitarse cuando necesites una presentación impresa y personalizada.</p>
+                            <a class="btn btn-gold btn-lg" href="{{ $whatsappAffiliationUrl }}" target="_blank" rel="noopener">
+                                Solicitar afiliación
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 

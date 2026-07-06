@@ -5,7 +5,10 @@
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="section-title h2 mb-0">Tipos de crédito</h1>
-        <a class="btn btn-outline-secondary" href="{{ route('admin.dashboard') }}">Volver</a>
+        <div class="d-flex gap-2">
+            <a class="btn btn-gold" href="{{ route('admin.credit-levels.create') }}">Nuevo tipo de crédito</a>
+            <a class="btn btn-outline-secondary" href="{{ route('admin.dashboard') }}">Volver</a>
+        </div>
     </div>
 
     <div class="table-responsive table-wrap bg-white">

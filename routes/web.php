@@ -20,6 +20,8 @@ Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admi
 Route::middleware('admin.auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::get('/credit-levels', [AdminCreditLevelController::class, 'index'])->name('credit-levels.index');
+    Route::get('/credit-levels/create', [AdminCreditLevelController::class, 'create'])->name('credit-levels.create');
+    Route::post('/credit-levels', [AdminCreditLevelController::class, 'store'])->name('credit-levels.store');
     Route::get('/credit-levels/{creditLevel}/edit', [AdminCreditLevelController::class, 'edit'])->name('credit-levels.edit');
     Route::put('/credit-levels/{creditLevel}', [AdminCreditLevelController::class, 'update'])->name('credit-levels.update');
     Route::get('/settings', [AdminSettingController::class, 'edit'])->name('settings.edit');
