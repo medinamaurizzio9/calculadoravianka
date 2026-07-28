@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\SiteSetting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 
 class AdminSettingController extends Controller
@@ -20,6 +21,19 @@ class AdminSettingController extends Controller
     public function update(Request $request): RedirectResponse
     {
         $values = $request->input('settings', []);
+
+        $validator = Validator::make($request->all(), [
+            'settings.' . SiteSetting::AFFILIATE_URL => ['nullable', 'url', 'max:500'],
+        ], [
+            'settings.' . SiteSetting::AFFILIATE_URL . '.url' => 'La URL de afiliación debe ser una dirección válida.',
+            'settings.' . SiteSetting::AFFILIATE_URL . '.max' => 'La URL de afiliación no debe superar 500 caracteres.',
+        ]);
+
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         if (blank($values['whatsapp_number'] ?? null)) {
             return back()

@@ -237,6 +237,14 @@
 </head>
 <body>
     @php
+        $affiliateButton = function (string $label, string $classes = 'btn btn-gold') use ($affiliateUrl) {
+            if ($affiliateUrl) {
+                return '<a class="' . e($classes) . '" href="' . e($affiliateUrl) . '" target="_blank" rel="noopener noreferrer">' . e($label) . '</a>';
+            }
+
+            return '<button class="' . e($classes) . '" type="button" disabled title="Configure el enlace desde Administración." data-bs-toggle="tooltip">' . e($label) . '</button>';
+        };
+
         $creditCards = [
             [
                 'title' => 'Crédito Productivo / Emprendimiento',
@@ -265,9 +273,7 @@
                     <p class="lead mb-0">{{ $settings['hero_subtitle'] ?? 'Calcula tu cuota aproximada antes de solicitar tu afiliación' }}</p>
                 </div>
                 <div class="col-lg-4 text-lg-end">
-                    <a class="btn btn-gold btn-lg" href="{{ $whatsappAffiliationUrl }}" target="_blank" rel="noopener">
-                        Solicitar afiliación
-                    </a>
+                    {!! $affiliateButton('Solicitar afiliación', 'btn btn-gold btn-lg') !!}
                 </div>
             </div>
         </div>
@@ -360,7 +366,7 @@
                             <div class="visual-card-body">
                                 <h2 class="section-title h5 mb-2">{{ $card['title'] }}</h2>
                                 <p class="text-muted">{{ $card['text'] }}</p>
-                                <a class="btn btn-gold" href="{{ $whatsappAffiliationUrl }}" target="_blank" rel="noopener">Solicitar información</a>
+                                {!! $affiliateButton('Solicitar información') !!}
                             </div>
                         </article>
                     </div>
@@ -412,9 +418,7 @@
                         <p class="mb-0">Sigue estos pasos para activar tus beneficios como afiliado y solicitar tu credencial.</p>
                     </div>
                     <div class="col-lg-4 text-lg-end">
-                        <a class="btn btn-gold btn-lg" href="{{ $whatsappAffiliationUrl }}" target="_blank" rel="noopener">
-                            Solicitar afiliación
-                        </a>
+                        {!! $affiliateButton('Solicitar afiliación', 'btn btn-gold btn-lg') !!}
                     </div>
                 </div>
             </div>
@@ -469,9 +473,7 @@
                         <div class="content-card p-4 h-100">
                             <h3 class="h5 section-title mb-3">Credencial confiable para afiliados</h3>
                             <p class="text-muted mb-4">La credencial virtual no tiene costo adicional. La tarjeta física es opcional y puede solicitarse cuando necesites una presentación impresa y personalizada.</p>
-                            <a class="btn btn-gold btn-lg" href="{{ $whatsappAffiliationUrl }}" target="_blank" rel="noopener">
-                                Solicitar afiliación
-                            </a>
+                            {!! $affiliateButton('Solicitar afiliación', 'btn btn-gold btn-lg') !!}
                         </div>
                     </div>
                 </div>
@@ -504,9 +506,7 @@
                     <p class="mb-0">Da el siguiente paso y solicita los requisitos por mensaje.</p>
                 </div>
                 <div class="col-lg-6 text-lg-end">
-                    <a class="btn btn-gold btn-lg" href="{{ $whatsappAffiliationUrl }}" target="_blank" rel="noopener">
-                        Solicitar afiliación
-                    </a>
+                    {!! $affiliateButton('Solicitar afiliación', 'btn btn-gold btn-lg') !!}
                 </div>
             </div>
         </section>
@@ -580,7 +580,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <a class="btn btn-gold" href="{{ $whatsappAffiliationUrl }}" target="_blank" rel="noopener">Solicitar afiliación</a>
+                        {!! $affiliateButton('Solicitar afiliación') !!}
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
                     </div>
                 </div>
@@ -782,6 +782,10 @@
             var loanType = document.getElementById('tipo_prestamo');
             var amount = document.getElementById('monto');
             var resultModalElement = document.getElementById('resultadoCreditoModal');
+
+            document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (tooltipTrigger) {
+                new bootstrap.Tooltip(tooltipTrigger);
+            });
 
             if (loanType) {
                 loanType.addEventListener('change', function () {

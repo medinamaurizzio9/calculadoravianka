@@ -58,10 +58,9 @@ class CreditSimulatorController extends Controller
             'result' => $result,
             'requirements' => $this->requirements($settings),
             'settings' => $settings,
-            'whatsappAffiliationUrl' => $this->whatsappUrl(
-                $settings['whatsapp_number'] ?? '59162553853',
-                $settings['whatsapp_affiliation_message'] ?? 'Me interesa, vi su anuncio, quiero afiliarme. ¿Me envía requisitos?'
-            ),
+            'affiliateUrl' => filled($settings[SiteSetting::AFFILIATE_URL] ?? null)
+                ? $settings[SiteSetting::AFFILIATE_URL]
+                : null,
         ]);
     }
 
@@ -162,8 +161,4 @@ class CreditSimulatorController extends Controller
         return preg_split('/\r\n|\r|\n/', $settings['general_requirements'] ?? '', -1, PREG_SPLIT_NO_EMPTY);
     }
 
-    private function whatsappUrl(string $number, string $message): string
-    {
-        return 'https://wa.me/' . preg_replace('/\D+/', '', $number) . '?text=' . rawurlencode($message);
-    }
 }

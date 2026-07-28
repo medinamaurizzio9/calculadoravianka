@@ -28,6 +28,13 @@ class SiteSettingSeeder extends Seeder
                 'label' => 'Mensaje para solicitar afiliación',
             ],
             [
+                'key' => SiteSetting::AFFILIATE_URL,
+                'value' => null,
+                'type' => 'url',
+                'group' => 'enlace_afiliacion',
+                'label' => 'URL de afiliación',
+            ],
+            [
                 'key' => 'hero_title',
                 'value' => 'Simulador de Créditos',
                 'type' => 'text',
