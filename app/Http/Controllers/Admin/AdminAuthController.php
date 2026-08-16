@@ -25,20 +25,32 @@ class AdminAuthController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        if ($credentials['username'] !== 'admin' || $credentials['password'] !== 'admin123') {
+        $adminUsername = config('admin.username');
+        $adminPassword = config('admin.password');
+
+        if (
+            ! is_string($adminUsername)
+            || $adminUsername === ''
+            || ! is_string($adminPassword)
+            || $adminPassword === ''
+            || ! hash_equals($adminUsername, $credentials['username'])
+            || ! hash_equals($adminPassword, $credentials['password'])
+        ) {
             return back()
                 ->withErrors(['username' => 'Usuario o contraseña incorrectos.'])
                 ->withInput(['username' => $credentials['username']]);
         }
 
-        session(['admin_logged_in' => true]);
+        $request->session()->regenerate();
+        $request->session()->put('admin_logged_in', true);
 
         return redirect()->route('admin.dashboard');
     }
 
-    public function logout(): RedirectResponse
+    public function logout(Request $request): RedirectResponse
     {
-        session()->forget('admin_logged_in');
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
         return redirect()->route('admin.login');
     }

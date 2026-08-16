@@ -40,15 +40,15 @@ class AdminCreditLevelController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'slug' => ['required', 'string', 'max:255', 'alpha_dash', 'unique:credit_levels,slug'],
-            'level' => ['required', 'numeric', 'min:1'],
-            'affiliations' => ['required', 'numeric', 'min:0'],
+            'level' => ['required', 'integer', 'min:1'],
+            'affiliations' => ['required', 'integer', 'min:0'],
             'affiliation_cost' => ['required', 'numeric', 'min:0'],
             'min_amount' => ['required', 'numeric', 'min:0'],
-            'max_amount' => ['nullable', 'numeric', 'min:0'],
+            'max_amount' => ['nullable', 'numeric', 'min:0', 'gte:min_amount'],
             'annual_rate' => ['required', 'numeric', 'min:0', 'max:100'],
-            'available_terms' => ['required', 'string'],
+            'available_terms' => ['required', 'string', 'regex:/^\s*[1-9]\d*\s*(,\s*[1-9]\d*\s*)*$/'],
             'authorized_use' => ['nullable', 'string'],
-            'sort_order' => ['required', 'numeric', 'min:0'],
+            'sort_order' => ['required', 'integer', 'min:0'],
         ]);
 
         $validated['available_terms'] = $this->parseAvailableTerms($validated['available_terms']);
@@ -71,9 +71,9 @@ class AdminCreditLevelController extends Controller
             'affiliations' => ['required', 'integer', 'min:0'],
             'affiliation_cost' => ['required', 'numeric', 'min:0'],
             'min_amount' => ['required', 'numeric', 'min:0'],
-            'max_amount' => ['nullable', 'numeric', 'min:0'],
+            'max_amount' => ['nullable', 'numeric', 'min:0', 'gte:min_amount'],
             'annual_rate' => ['required', 'numeric', 'min:0', 'max:100'],
-            'available_terms' => ['nullable', 'string'],
+            'available_terms' => ['required', 'string', 'regex:/^\s*[1-9]\d*\s*(,\s*[1-9]\d*\s*)*$/'],
             'authorized_use' => ['nullable', 'string'],
             'sort_order' => ['required', 'integer', 'min:0'],
         ]);

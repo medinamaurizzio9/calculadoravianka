@@ -14,7 +14,9 @@ Route::get('/', function () {
 Route::get('/simulador-creditos', CreditSimulatorController::class)->name('simulador-creditos');
 
 Route::get('/admin/login', [AdminAuthController::class, 'showLogin'])->name('admin.login');
-Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.post');
+Route::post('/admin/login', [AdminAuthController::class, 'login'])
+    ->middleware('throttle:5,1')
+    ->name('admin.login.post');
 Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
 Route::middleware('admin.auth')->prefix('admin')->name('admin.')->group(function () {
