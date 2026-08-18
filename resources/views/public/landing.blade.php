@@ -3,8 +3,24 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Cooperativa Minera Tierra Bendita | Créditos y Servicios para Afiliados</title>
-    <meta name="description" content="Conoce los servicios, alternativas de financiamiento y simulador de créditos de Cooperativa Minera Tierra Bendita.">
+    <title>{{ $seo['title'] }}</title>
+    <meta name="description" content="{{ $seo['description'] }}">
+    <link rel="canonical" href="{{ $seo['canonical'] }}">
+    <meta name="robots" content="{{ $seo['robots'] }}">
+    <meta property="og:locale" content="es_BO">
+    <meta property="og:type" content="{{ $seo['og_type'] }}">
+    <meta property="og:site_name" content="{{ $seo['site_name'] }}">
+    <meta property="og:title" content="{{ $seo['title'] }}">
+    <meta property="og:description" content="{{ $seo['description'] }}">
+    <meta property="og:url" content="{{ $seo['canonical'] }}">
+    <meta property="og:image" content="{{ $seo['og_image'] }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $seo['title'] }}">
+    <meta name="twitter:description" content="{{ $seo['description'] }}">
+    <meta name="twitter:image" content="{{ $seo['og_image'] }}">
+    <script type="application/ld+json">
+        @json($structuredData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
+    </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 @php
@@ -81,7 +97,7 @@
                     <div class="mb-5 inline-flex items-center gap-2 rounded-full border border-[#F0C75E]/30 bg-[#061A33]/55 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-[#F0C75E] backdrop-blur">
                         <span class="h-2 w-2 rounded-full bg-[#D4A72C]"></span>{{ $settings['hero_eyebrow'] ?? 'Cooperativa Minera Tierra Bendita' }}
                     </div>
-                    <h1 class="max-w-2xl text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">{{ $settings['hero_title'] ?? 'Soluciones financieras para construir tu futuro' }}</h1>
+                    <h1 class="max-w-2xl text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">{{ $seo['h1'] }}</h1>
                     <p class="mt-6 max-w-xl text-base leading-8 text-white/82 sm:text-lg">{{ $settings['hero_description'] ?? 'Accede a alternativas de financiamiento diseñadas para nuestros afiliados, con información clara, atención personalizada y herramientas digitales para tomar mejores decisiones.' }}</p>
                     <div class="mt-9 flex flex-col gap-3 sm:flex-row">
                         <a href="{{ $settings['hero_primary_url'] ?? '#simulador' }}" class="inline-flex min-h-12 items-center justify-center rounded-lg bg-[#D4A72C] px-6 py-3 font-bold text-[#061A33] shadow-xl transition hover:-translate-y-0.5 hover:bg-[#F0C75E] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">{{ $settings['hero_primary_text'] ?? 'Simular mi crédito' }}</a>

@@ -1,2 +1,11 @@
 User-agent: *
-Disallow:
+Allow: /
+
+Disallow: /admin/
+Disallow: /admin/login
+Disallow: /admin/logout
+Disallow: /storage/
+Disallow: /api/
+Disallow: /up
+
+Sitemap: https://cooperativatierrabendita.com/sitemap.xml

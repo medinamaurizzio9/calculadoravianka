@@ -22,6 +22,60 @@ class LandingPageTest extends TestCase
             ->assertSee('href="#simulador"', false);
     }
 
+    public function test_home_exposes_complete_public_seo_metadata(): void
+    {
+        $response = $this->get('/')->assertOk();
+        $html = $response->getContent();
+
+        $this->assertSame(1, substr_count($html, '<h1'));
+        $response
+            ->assertSee('<title>Cooperativa Minera Tierra Bendita | Créditos y servicios para afiliados</title>', false)
+            ->assertSee('<meta name="description" content="Cooperativa Minera Tierra Bendita ofrece información institucional, beneficios para afiliados y un simulador de créditos para orientar decisiones financieras.">', false)
+            ->assertSee('<link rel="canonical" href="https://cooperativatierrabendita.com/">', false)
+            ->assertSee('<meta name="robots" content="index, follow, max-image-preview:large">', false)
+            ->assertSee('<meta property="og:title" content="Cooperativa Minera Tierra Bendita | Créditos y servicios para afiliados">', false)
+            ->assertSee('<meta name="twitter:card" content="summary_large_image">', false)
+            ->assertSee('application/ld+json', false)
+            ->assertSee('"@type":"Organization"', false)
+            ->assertSee('"@type":"FinancialService"', false);
+    }
+
+    public function test_credit_simulator_exposes_specific_seo_metadata(): void
+    {
+        $response = $this->get('/simulador-creditos')->assertOk();
+        $html = $response->getContent();
+
+        $this->assertSame(1, substr_count($html, '<h1'));
+        $response
+            ->assertSee('<title>Simulador de créditos en Bolivia | Cooperativa Tierra Bendita</title>', false)
+            ->assertSee('<meta name="description" content="Calcula cuotas referenciales para créditos, préstamos y financiamiento en Bolivia con el simulador de Cooperativa Minera Tierra Bendita.">', false)
+            ->assertSee('<link rel="canonical" href="https://cooperativatierrabendita.com/simulador-creditos">', false)
+            ->assertSee('Simulador de créditos y préstamos en Bolivia')
+            ->assertSee('"@type":"WebApplication"', false)
+            ->assertSee('"applicationCategory":"FinanceApplication"', false);
+    }
+
+    public function test_robots_and_sitemap_include_only_public_indexable_pages(): void
+    {
+        $robots = file_get_contents(public_path('robots.txt'));
+        $sitemap = file_get_contents(public_path('sitemap.xml'));
+
+        $this->assertStringContainsString('Disallow: /admin/', $robots);
+        $this->assertStringContainsString('Disallow: /admin/login', $robots);
+        $this->assertStringContainsString('Disallow: /admin/logout', $robots);
+        $this->assertStringContainsString('Disallow: /storage/', $robots);
+        $this->assertStringContainsString('Disallow: /api/', $robots);
+        $this->assertStringContainsString('Disallow: /up', $robots);
+        $this->assertStringContainsString('Sitemap: https://cooperativatierrabendita.com/sitemap.xml', $robots);
+
+        $this->assertStringContainsString('<loc>https://cooperativatierrabendita.com/</loc>', $sitemap);
+        $this->assertStringContainsString('<loc>https://cooperativatierrabendita.com/simulador-creditos</loc>', $sitemap);
+        $this->assertStringNotContainsString('/admin', $sitemap);
+        $this->assertStringNotContainsString('/login', $sitemap);
+        $this->assertStringNotContainsString('/api/', $sitemap);
+        $this->assertStringNotContainsString('/storage/', $sitemap);
+    }
+
     public function test_landing_uses_the_official_logo_without_distorting_it(): void
     {
         $this->get('/')

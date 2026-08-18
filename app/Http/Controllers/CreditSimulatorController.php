@@ -12,6 +12,8 @@ class CreditSimulatorController extends Controller
     {
         $levels = $this->creditLevels();
         $settings = $this->siteSettings();
+        $isSimulatorPage = $request->routeIs('simulador-creditos');
+        $seo = $this->seoMetadata($isSimulatorPage, $settings);
         $selectedType = $request->query('tipo_prestamo');
         $amount = $request->filled('monto') ? (float) $request->query('monto') : null;
         $term = $request->filled('plazo') ? (int) $request->query('plazo') : null;
@@ -58,11 +60,124 @@ class CreditSimulatorController extends Controller
             'result' => $result,
             'requirements' => $this->requirements($settings),
             'settings' => $settings,
+            'seo' => $seo,
+            'structuredData' => $this->structuredData($seo, $settings, $levels, $isSimulatorPage),
             'affiliateUrl' => filled($settings[SiteSetting::AFFILIATE_URL] ?? null)
                 ? $settings[SiteSetting::AFFILIATE_URL]
                 : null,
-            'focusSimulator' => $request->routeIs('simulador-creditos'),
+            'focusSimulator' => $isSimulatorPage,
         ]);
+    }
+
+    private function seoMetadata(bool $isSimulatorPage, array $settings): array
+    {
+        $baseUrl = 'https://cooperativatierrabendita.com';
+        $siteName = $settings['site_name'] ?? 'Cooperativa Minera Tierra Bendita';
+
+        if ($isSimulatorPage) {
+            return [
+                'title' => 'Simulador de créditos en Bolivia | Cooperativa Tierra Bendita',
+                'description' => 'Calcula cuotas referenciales para créditos, préstamos y financiamiento en Bolivia con el simulador de Cooperativa Minera Tierra Bendita.',
+                'canonical' => $baseUrl.'/simulador-creditos',
+                'robots' => 'index, follow, max-image-preview:large',
+                'og_type' => 'website',
+                'og_image' => $baseUrl.'/images/tierra-bendita-hero.png',
+                'h1' => 'Simulador de créditos y préstamos en Bolivia',
+                'site_name' => $siteName,
+            ];
+        }
+
+        return [
+            'title' => 'Cooperativa Minera Tierra Bendita | Créditos y servicios para afiliados',
+            'description' => 'Cooperativa Minera Tierra Bendita ofrece información institucional, beneficios para afiliados y un simulador de créditos para orientar decisiones financieras.',
+            'canonical' => $baseUrl.'/',
+            'robots' => 'index, follow, max-image-preview:large',
+            'og_type' => 'website',
+            'og_image' => $baseUrl.'/images/tierra-bendita-hero.png',
+            'h1' => $settings['hero_title'] ?? 'Soluciones financieras para construir tu futuro',
+            'site_name' => $siteName,
+        ];
+    }
+
+    private function structuredData(array $seo, array $settings, array $levels, bool $isSimulatorPage): array
+    {
+        $baseUrl = 'https://cooperativatierrabendita.com';
+        $siteName = $seo['site_name'];
+        $organizationId = $baseUrl.'/#organization';
+
+        $graph = [
+            [
+                '@type' => 'Organization',
+                '@id' => $organizationId,
+                'name' => $siteName,
+                'url' => $baseUrl.'/',
+                'logo' => $baseUrl.'/images/tierra-bendita-logo-oficial.png',
+                'description' => 'Cooperativa Minera Tierra Bendita brinda información, beneficios y orientación financiera para sus afiliados.',
+            ],
+            [
+                '@type' => 'WebSite',
+                '@id' => $baseUrl.'/#website',
+                'url' => $baseUrl.'/',
+                'name' => $siteName,
+                'publisher' => ['@id' => $organizationId],
+                'inLanguage' => 'es-BO',
+            ],
+            [
+                '@type' => 'WebPage',
+                '@id' => $seo['canonical'].'#webpage',
+                'url' => $seo['canonical'],
+                'name' => $seo['title'],
+                'description' => $seo['description'],
+                'isPartOf' => ['@id' => $baseUrl.'/#website'],
+                'about' => ['@id' => $organizationId],
+                'inLanguage' => 'es-BO',
+            ],
+        ];
+
+        if ($isSimulatorPage) {
+            $graph[] = [
+                '@type' => 'WebApplication',
+                '@id' => $baseUrl.'/simulador-creditos#simulator',
+                'name' => 'Simulador de créditos Cooperativa Tierra Bendita',
+                'url' => $baseUrl.'/simulador-creditos',
+                'applicationCategory' => 'FinanceApplication',
+                'operatingSystem' => 'Web',
+                'description' => 'Herramienta informativa para estimar cuotas referenciales de créditos y préstamos en Bolivia.',
+                'provider' => ['@id' => $organizationId],
+                'offers' => [
+                    '@type' => 'Offer',
+                    'price' => '0',
+                    'priceCurrency' => 'BOB',
+                ],
+            ];
+        } else {
+            $graph[] = [
+                '@type' => 'FinancialService',
+                '@id' => $baseUrl.'/#financial-service',
+                'name' => $siteName,
+                'url' => $baseUrl.'/',
+                'description' => 'Servicios de orientación financiera, beneficios y alternativas de crédito para afiliados.',
+                'areaServed' => [
+                    '@type' => 'Country',
+                    'name' => 'Bolivia',
+                ],
+                'provider' => ['@id' => $organizationId],
+                'hasOfferCatalog' => [
+                    '@type' => 'OfferCatalog',
+                    'name' => 'Opciones de financiamiento',
+                    'itemListElement' => collect($levels)->map(fn (array $level) => [
+                        '@type' => 'Offer',
+                        'name' => $level['name'],
+                        'description' => $level['usage'],
+                    ])->values()->all(),
+                ],
+            ];
+        }
+
+        return [
+            '@context' => 'https://schema.org',
+            '@graph' => $graph,
+        ];
     }
 
     private function buildResult(array $level, float $amount, int $term): array
