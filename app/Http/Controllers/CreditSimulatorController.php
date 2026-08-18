@@ -47,7 +47,7 @@ class CreditSimulatorController extends Controller
             }
         }
 
-        return view('public.simulador-creditos', [
+        return view('public.landing', [
             'levels' => $levels,
             'selectedType' => $selectedType,
             'selectedLevel' => $selectedLevel,
@@ -61,6 +61,7 @@ class CreditSimulatorController extends Controller
             'affiliateUrl' => filled($settings[SiteSetting::AFFILIATE_URL] ?? null)
                 ? $settings[SiteSetting::AFFILIATE_URL]
                 : null,
+            'focusSimulator' => $request->routeIs('simulador-creditos'),
         ]);
     }
 

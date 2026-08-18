@@ -7,3 +7,30 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+@layer base {
+    :focus-visible { outline-color: #D4A72C; }
+    section { scroll-margin-top: 5.5rem; }
+}
+
+@layer components {
+    .section-eyebrow {
+        @apply mb-3 text-xs font-bold uppercase tracking-[0.16em] text-[#174A7E];
+    }
+
+    .section-title {
+        @apply text-3xl font-bold leading-tight tracking-tight text-[#061A33] sm:text-4xl lg:text-5xl;
+    }
+
+    .section-copy {
+        @apply mt-5 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg;
+    }
+
+    .form-label-public {
+        @apply mb-2 block text-sm font-bold text-[#061A33];
+    }
+
+    .form-control-public {
+        @apply min-h-12 w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-[#172033] shadow-sm transition placeholder:text-slate-400 focus:border-[#174A7E] focus:outline-none focus:ring-4 focus:ring-[#174A7E]/10;
+    }
+}

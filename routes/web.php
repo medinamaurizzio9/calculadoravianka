@@ -7,10 +7,7 @@ use App\Http\Controllers\Admin\AdminSettingController;
 use App\Http\Controllers\CreditSimulatorController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return redirect('/simulador-creditos');
-});
-
+Route::get('/', CreditSimulatorController::class)->name('home');
 Route::get('/simulador-creditos', CreditSimulatorController::class)->name('simulador-creditos');
 
 Route::get('/admin/login', [AdminAuthController::class, 'showLogin'])->name('admin.login');

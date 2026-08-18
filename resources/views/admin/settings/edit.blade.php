@@ -8,7 +8,7 @@
         <a class="btn btn-outline-secondary" href="{{ route('admin.dashboard') }}">Volver</a>
     </div>
 
-    <form method="POST" action="{{ route('admin.settings.update') }}" class="card p-4">
+    <form method="POST" action="{{ route('admin.settings.update') }}" class="card p-4" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -18,6 +18,8 @@
                 'contacto' => 'Contacto',
                 'textos' => 'Textos',
                 'requisitos' => 'Requisitos',
+                'identidad_publica' => 'Identidad y página pública — Identidad',
+                'landing_hero' => 'Identidad y página pública — Banner principal',
             ];
         @endphp
 
@@ -27,9 +29,32 @@
 
                 <div class="row g-3">
                     @foreach ($groupSettings as $setting)
-                        <div class="col-md-{{ $setting->type === 'textarea' ? '12' : '6' }}">
+                        <div class="col-md-{{ in_array($setting->type, ['textarea', 'image'], true) ? '12' : '6' }}">
                             <label class="form-label" for="setting_{{ $setting->key }}">{{ $setting->label ?? $setting->key }}</label>
-                            @if ($setting->type === 'textarea')
+                            @if ($setting->type === 'image')
+                                @php
+                                    $previewUrl = str_starts_with((string) $setting->value, 'site/')
+                                        ? \Illuminate\Support\Facades\Storage::url($setting->value)
+                                        : asset($setting->value);
+                                @endphp
+                                @if ($setting->value)
+                                    <div class="mb-3 rounded border bg-light p-3">
+                                        <img
+                                            src="{{ $previewUrl }}"
+                                            alt="Vista previa de {{ $setting->label }}"
+                                            style="max-height: {{ $setting->key === 'site_logo' ? '100px' : '220px' }}; max-width: 100%; object-fit: contain;"
+                                        >
+                                    </div>
+                                @endif
+                                <input
+                                    class="form-control"
+                                    id="setting_{{ $setting->key }}"
+                                    name="{{ $setting->key }}"
+                                    type="file"
+                                    accept="image/jpeg,image/png,image/webp"
+                                >
+                                <div class="form-text">JPG, JPEG, PNG o WEBP. {{ $setting->key === 'site_logo' ? 'Máximo 3 MB.' : 'Máximo 5 MB.' }}</div>
+                            @elseif ($setting->type === 'textarea')
                                 <textarea class="form-control" id="setting_{{ $setting->key }}" name="settings[{{ $setting->key }}]" rows="4">{{ old('settings.' . $setting->key, $setting->value) }}</textarea>
                             @else
                                 <input

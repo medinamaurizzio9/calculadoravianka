@@ -109,7 +109,7 @@ class CreditSimulatorTest extends TestCase
 
     public function test_site_settings_pluck_contract_is_preserved(): void
     {
-        SiteSetting::create(['key' => 'hero_title', 'value' => 'Título de prueba']);
+        SiteSetting::query()->where('key', 'hero_title')->update(['value' => 'Título de prueba']);
         SiteSetting::create(['key' => 'general_warning', 'value' => 'Advertencia de prueba']);
 
         $settings = SiteSetting::pluck('value', 'key')->all();
